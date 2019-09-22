@@ -11,15 +11,15 @@ using namespace std;
 namespace Module1::Sub10 {
 
 void Init() {
-	printf("%s", __func__);
+	printf("%s\n", __PRETTY_FUNCTION__);
 }
 
 void Run() {
-	printf("%s", __func__);
+	printf("%s\n", __PRETTY_FUNCTION__);
 }
 
 void Terminate() {
-	printf("%s", __func__);
+	printf("%s\n", __PRETTY_FUNCTION__);
 }
 
 }

@@ -14,19 +14,20 @@ using namespace std;
 namespace Module1
 {
 	void Init() {
-		printf("%s", __func__);
+		printf("%s\n", __PRETTY_FUNCTION__);
 		Sub10::Init();
 		Sub11::Init();
 	}
 
 	void Run() {
-		printf("%s", __func__);
+		printf("%s\n", __PRETTY_FUNCTION__);
 		Sub10::Run();
 		Sub11::Run();
+		printf("\nHello Module1::Run world\n\n");
 	}
 
 	void Terminate() {
-		printf("%s", __func__);
+		printf("%s\n", __PRETTY_FUNCTION__);
 		Sub10::Terminate();
 		Sub11::Terminate();
 	}
