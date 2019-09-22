@@ -1,7 +1,6 @@
 #pragma once
 
-namespace Module0
-{
+namespace Module1::Su10 {
 	void Init();
 	void Run();
 	void Terminate();

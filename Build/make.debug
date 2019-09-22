@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+export BASE_DIR=~/git/MakeSystem
+LANG=C make clean all Q= SHELL="/bin/sh -x" 2>&1 | tee makelog.txt
+
