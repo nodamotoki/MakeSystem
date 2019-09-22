@@ -32,17 +32,23 @@ OBJS   := $(abspath $(OBJS))
 endif
 DEPS   := $(OBJS:.o=.d)
 
+# 最終生成物には拡張子がない前提
+# ar T で作る thin archive ではないので fat にしてみた
+ifeq (,$(suffix $(TARGET)))
+FAT_ARCHIVES := $(addsuffix .fat,$(LIBS))
+endif
+
 # コンパイルオプション
-IFLAGS := $(patsubst %,-I%,$(BASIC_INCS)) $(patsubst %,-I%,$(INCS))
-DFLAGS := $(patsubst %,-D%,$(BASIC_DEFS)) $(patsubst %,-D%,$(DEFS))
-CFLAGS := -g -Wall $(IFLAGS) $(DFLAGS)
+IFLAGS := -I. $(patsubst %,-I%,$(BASIC_INCS)) $(patsubst %,-I%,$(INCS))
+DFLAGS := $(pa	tsubst %,-D%,$(BASIC_DEFS)) $(patsubst %,-D%,$(DEFS))
+CFLAGS := -g -Wall -std=gnu++17 $(IFLAGS) $(DFLAGS)
 
 Q := @
 ifneq (,$(VERBOSE))
 Q :=
 endif
 
-.PHONY: all clean info $(SUB_DIRS)
+.PHONY: all clean info $(SUB_DIRS) $(FAT_ARCHIVES)
 
 # アーカイブ作成後、中間ファイルを自動的に消さないようにする
 .SECONDARY: $(OBJS) $(LIBS)
@@ -50,25 +56,39 @@ endif
 all: $(SUB_DIRS) $(TARGET)
 
 clean: $(SUB_DIRS)
-	$(Q) rm -f $(TARGET) $(OBJS) $(DEPS)
+	$(Q) rm -f $(TARGET) $(OBJS) $(DEPS) $(TARGET).map lib$(TARGET).a
 
 $(SUB_DIRS):
 	$(Q) $(MAKE) -C $@ $(MAKECMDGOALS)
 
-$(basename $(TARGET)): $(OBJS)
-	$(Q) ld --cref -Map $(@).map -o $@ $^ $(LIBS)
+$(basename $(TARGET)): $(OBJS) $(FAT_ARCHIVES)
+	$(Q) #ld --cref -Map $(@).map -o $@ $^ -lc -lm
+	$(Q) g++ -o $@ $^ -lc -lm
+
+$(FAT_ARCHIVES):
+	$(Q) #echo FAT_ARCHIVES: $(@)
+	$(Q) echo "create $(@)" > $(@).script
+	$(Q) for obj in `ar t $(patsubst %.fat,%,$(@))`; do echo "addlib $${obj}" >> $(@).script; done
+	$(Q) echo "save" >> $(@).script
+	$(Q) echo "end"  >> $(@).script
+	$(Q) cat $(@).script | ar -M
+	$(Q) ranlib $(@)
 
 $(basename $(TARGET)).a: $(OBJS)
 	$(Q) ar cqT $@ $(OBJS) $(LIBS)
 
 $(OBJ_ROOT)/%.o : $(BASE_DIR)/%.cpp
 	$(Q) if [ ! -d $(dir $@) ]; then mkdir -p $(dir $@); fi
-	$(Q) g++ $(CFLAGS) -MM -MF $(@:.o=.d) -MP -MT $@ -c -o $@ $<
+	$(Q) g++ $(CFLAGS) -MMD -c -o $@ $<
 
 info:
 	@echo ==== SRCS
 	@echo $(SRCS)
 	@echo ==== OBJS
 	@echo $(OBJS)
+	@echo ==== LIBS
+	@echo $(LIBS)
+	@echo ==== FAT_ARCHIVES
+	@echo $(FAT_ARCHIVES)
 
 -include $(DEPS)
