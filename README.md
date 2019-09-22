@@ -6,6 +6,7 @@
 
 ## 使い方
 
+    $ cd ~/work/MakeSysmte/Build
     $ export BASE_DIR=~/work/MakeSystem
     $ make
 
@@ -71,12 +72,12 @@
 * Build ディレクトリで make と打つとシステム全体をビルド
 * 各ソースディレクトリで make と打つとそのディレクトリとサブフォルダだけメイクする
 * ソースとバイナリのフォルダは独立
-* ただし make を実行したディレクトリに書かれた TARGET だけはそのディレクトリに書き出す。
-* 依存関係もちゃんと見ているので、基本点には変更があったファイルだけメイクする。
+* ただし make を実行したディレクトリにある Makefile に書かれた TARGET だけはそのディレクトリに書き出す。
+* 依存関係もちゃんと見ているので、基本的には変更があったファイルだけメイクする。
 * make clean で生成物をきれいに削除
 * make と打つと Build/Release の下にバイナリを生成する。
 * make BUILD_TYPE=Debug とすると Build/Debug の下。(ただし今は生成されるものは同じ)
 * make VERBOSE=1 で表示の量が増える。(make Q= でもよい)
-* メモ: make Q= SHELL="/bin/sh -x" とすると何やっているかよりわかりやすい。
+* メモ: make Q= SHELL="/bin/sh -x" とすると何やっているかが、よりわかりやすい。
 * サブディレクトリ毎の成果物は ar でアーカイブされるが thin archive なので速いしディスクスペースも節約。
 

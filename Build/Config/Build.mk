@@ -16,7 +16,7 @@ OBJ_ROOT  := $(BUILD_DIR)/$(BUILD_TYPE)
 endif
 
 # 生成ファイルの出力先を OBJ_ROOT 配下にする
-# ただし make を実行したディレクトリに書かれた TARGET だけはそのディレクトリに書き出す。
+# ただし make を実行したディレクトリの Makefile に書かれた TARGET だけはそのディレクトリに書き出す。
 ifneq ($(START_DIR),$(CURDIR))
 TARGET := $(CURDIR)/$(TARGET)
 TARGET := $(patsubst $(BASE_DIR)/%,$(OBJ_ROOT)/%,$(TARGET))
