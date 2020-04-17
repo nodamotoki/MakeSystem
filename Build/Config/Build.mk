@@ -65,6 +65,7 @@ $(basename $(TARGET)): $(OBJS) $(LIBS)
 
 # アーカイブ用
 $(basename $(TARGET)).a: $(OBJS) $(LIBS)
+	$(Q) rm -f $(TARGET)
 	$(Q) ar cqT $@ $(OBJS) $(LIBS)
 
 $(OBJ_ROOT)/%.o : $(BASE_DIR)/%.cpp
